@@ -1,19 +1,10 @@
-"""
-gui.py
-------
-Tkinter graphical user interface for the Student Result Manager & Analyzer.
-Uses Frames, Labels, Buttons, Entry fields, Treeview, and message boxes.
-"""
-
 import tkinter as tk
 from tkinter import ttk, messagebox, simpledialog
 
 from manager import StudentManager
 from calculations import SUBJECTS, MAX_MARK
 
-
-# ── Colour palette ─────────────────────────────────────────────────────────────
-
+# color variables so i dont have to repeat hex codes everywhere
 DARK_BLUE  = "#2c3e50"
 MID_BLUE   = "#34495e"
 GREEN      = "#27ae60"
@@ -26,10 +17,7 @@ TEAL       = "#16a085"
 PURPLE     = "#8e44ad"
 
 
-# ── Helper: labelled entry row inside a grid frame ─────────────────────────────
-
 def _labelled_entry(parent, label_text, row, default=""):
-    """Create a Label + Entry pair in a grid frame. Returns the Entry widget."""
     tk.Label(parent, text=label_text, anchor=tk.W, bg=WHITE).grid(
         row=row, column=0, sticky=tk.W, padx=8, pady=4
     )
@@ -39,14 +27,7 @@ def _labelled_entry(parent, label_text, row, default=""):
     return entry
 
 
-# ── Add / Edit dialog (shared) ─────────────────────────────────────────────────
-
 def _open_student_form(parent, title, manager, existing_student=None):
-    """
-    Open a modal dialog for adding or updating a student.
-    If existing_student is provided the form is pre-filled (Update mode).
-    Returns True if the operation succeeded, False otherwise.
-    """
     result_holder = [False]
 
     dialog = tk.Toplevel(parent)
@@ -56,7 +37,6 @@ def _open_student_form(parent, title, manager, existing_student=None):
     dialog.grab_set()
     dialog.configure(bg=WHITE)
 
-    # ── Title banner ──
     tk.Label(
         dialog, text=title, font=("Arial", 13, "bold"),
         bg=DARK_BLUE, fg=WHITE, pady=8
@@ -67,16 +47,16 @@ def _open_student_form(parent, title, manager, existing_student=None):
 
     is_update = existing_student is not None
     id_default   = existing_student.student_id if is_update else ""
-    name_default = existing_student.name       if is_update else ""
+    name_default = existing_student.name if is_update else ""
 
     id_entry   = _labelled_entry(form_frame, "Student ID :", 0, id_default)
     name_entry = _labelled_entry(form_frame, "Full Name  :", 1, name_default)
 
     if is_update:
-        id_entry.config(state="disabled")   # ID must not change on update
+        id_entry.config(state="disabled")
 
     tk.Label(
-        form_frame, text="─── Subject Marks (0 – 100) ───",
+        form_frame, text="--- Subject Marks (0 - 100) ---",
         font=("Arial", 9, "italic"), bg=WHITE, fg=MID_BLUE
     ).grid(row=2, column=0, columnspan=2, pady=(8, 2))
 
@@ -88,39 +68,33 @@ def _open_student_form(parent, title, manager, existing_student=None):
         entry = _labelled_entry(form_frame, f"{subject} :", idx + 3, default_mark)
         mark_entries[subject] = entry
 
-    # ── Validation + submit ──
-
     def _validate_and_submit():
         s_id   = id_entry.get().strip()
         s_name = name_entry.get().strip()
 
         if not s_id:
-            messagebox.showerror("Validation Error", "Student ID cannot be empty.", parent=dialog)
+            messagebox.showerror("Error", "Student ID cannot be empty.", parent=dialog)
             return
         if not s_name:
-            messagebox.showerror("Validation Error", "Name cannot be empty.", parent=dialog)
+            messagebox.showerror("Error", "Name cannot be empty.", parent=dialog)
             return
         if not s_name.replace(" ", "").isalpha():
-            messagebox.showerror("Validation Error",
-                "Name should contain letters only.", parent=dialog)
+            messagebox.showerror("Error", "Name should contain letters only.", parent=dialog)
             return
 
         marks = {}
         for subject, entry in mark_entries.items():
             raw = entry.get().strip()
             if not raw:
-                messagebox.showerror("Validation Error",
-                    f"Please enter a mark for {subject}.", parent=dialog)
+                messagebox.showerror("Error", f"Please enter a mark for {subject}.", parent=dialog)
                 return
             try:
                 mark = float(raw)
             except ValueError:
-                messagebox.showerror("Validation Error",
-                    f"'{raw}' is not a valid number for {subject}.", parent=dialog)
+                messagebox.showerror("Error", f"'{raw}' is not a valid number for {subject}.", parent=dialog)
                 return
             if mark < 0 or mark > MAX_MARK:
-                messagebox.showerror("Validation Error",
-                    f"{subject} mark must be between 0 and {MAX_MARK}.", parent=dialog)
+                messagebox.showerror("Error", f"{subject} mark must be between 0 and {MAX_MARK}.", parent=dialog)
                 return
             marks[subject] = mark
 
@@ -136,7 +110,7 @@ def _open_student_form(parent, title, manager, existing_student=None):
         else:
             messagebox.showerror("Error", msg, parent=dialog)
 
-    btn_text = "Update Student" if is_update else "Add Student"
+    btn_text  = "Update Student" if is_update else "Add Student"
     btn_color = ORANGE if is_update else GREEN
 
     tk.Button(
@@ -149,12 +123,9 @@ def _open_student_form(parent, title, manager, existing_student=None):
     return result_holder[0]
 
 
-# ── Detail popup ───────────────────────────────────────────────────────────────
-
 def _show_student_detail(parent, student):
-    """Show a popup with full marks breakdown for one student."""
     win = tk.Toplevel(parent)
-    win.title(f"Student Detail – {student.student_id}")
+    win.title(f"Student Detail - {student.student_id}")
     win.geometry("340x360")
     win.resizable(False, False)
     win.configure(bg=WHITE)
@@ -180,10 +151,7 @@ def _show_student_detail(parent, student):
     ).pack(pady=6)
 
 
-# ── Statistics popup ───────────────────────────────────────────────────────────
-
 def _show_statistics_window(parent, stats, top_students, failed_students):
-    """Display class-level NumPy statistics in a dedicated window."""
     win = tk.Toplevel(parent)
     win.title("Class Statistics")
     win.geometry("420x540")
@@ -199,31 +167,36 @@ def _show_statistics_window(parent, stats, top_students, failed_students):
     frame = tk.Frame(win, bg=WHITE, padx=20, pady=10)
     frame.pack(fill=tk.BOTH, expand=True)
 
-    pass_rate = round(
-        (stats["pass_count"] / stats["total_students"]) * 100, 1
-    ) if stats["total_students"] > 0 else 0
+    if stats["total_students"] > 0:
+        pass_rate = round((stats["pass_count"] / stats["total_students"]) * 100, 1)
+    else:
+        pass_rate = 0
 
     stat_rows = [
-        ("Total Students",    str(stats["total_students"])),
-        ("Class Average",     f"{stats['class_average']} %"),
-        ("Highest %",         f"{stats['highest']} %"),
-        ("Lowest %",          f"{stats['lowest']} %"),
-        ("Median %",          f"{stats['median']} %"),
-        ("Std Deviation",     f"{stats['std_deviation']} %"),
-        ("Students Passed",   str(stats["pass_count"])),
-        ("Students Failed",   str(stats["fail_count"])),
-        ("Pass Rate",         f"{pass_rate} %"),
+        ("Total Students",  str(stats["total_students"])),
+        ("Class Average",   f"{stats['class_average']} %"),
+        ("Highest %",       f"{stats['highest']} %"),
+        ("Lowest %",        f"{stats['lowest']} %"),
+        ("Median %",        f"{stats['median']} %"),
+        ("Std Deviation",   f"{stats['std_deviation']} %"),
+        ("Students Passed", str(stats["pass_count"])),
+        ("Students Failed", str(stats["fail_count"])),
+        ("Pass Rate",       f"{pass_rate} %"),
     ]
 
     for r, (label, value) in enumerate(stat_rows):
         tk.Label(frame, text=label + " :", anchor=tk.W,
                  font=("Arial", 10), bg=WHITE).grid(row=r, column=0, sticky=tk.W, pady=2)
-        color = GREEN if "Pass" in label else RED if "Fail" in label else DARK_BLUE
+        if "Pass" in label:
+            color = GREEN
+        elif "Fail" in label:
+            color = RED
+        else:
+            color = DARK_BLUE
         tk.Label(frame, text=value, anchor=tk.W,
                  font=("Arial", 10, "bold"), fg=color, bg=WHITE).grid(
             row=r, column=1, sticky=tk.W, padx=14, pady=2)
 
-    # ── Top students ──
     separator = tk.Frame(win, height=1, bg=LIGHT_GREY)
     separator.pack(fill=tk.X, padx=10)
 
@@ -235,11 +208,10 @@ def _show_statistics_window(parent, stats, top_students, failed_students):
     for i, s in enumerate(top_students, 1):
         tk.Label(
             win,
-            text=f"  {i}. [{s.student_id}] {s.name}  —  {s.percentage:.2f}%  |  {s.grade}",
+            text=f"  {i}. [{s.student_id}] {s.name}  -  {s.percentage:.2f}%  |  {s.grade}",
             font=("Arial", 9), bg=WHITE, fg=DARK_BLUE, anchor=tk.W
         ).pack(anchor=tk.W, padx=20)
 
-    # ── Failed students ──
     tk.Label(
         win, text=f"Failed Students ({len(failed_students)})",
         font=("Arial", 10, "bold"), bg=WHITE, fg=RED
@@ -249,13 +221,12 @@ def _show_statistics_window(parent, stats, top_students, failed_students):
         for s in failed_students:
             tk.Label(
                 win,
-                text=f"  • [{s.student_id}] {s.name}  —  {s.percentage:.2f}%",
+                text=f"  - [{s.student_id}] {s.name}  -  {s.percentage:.2f}%",
                 font=("Arial", 9), bg=WHITE, fg=RED, anchor=tk.W
             ).pack(anchor=tk.W, padx=20)
     else:
-        tk.Label(win, text="  None – all students passed!",
-                 font=("Arial", 9), bg=WHITE, fg=GREEN, anchor=tk.W).pack(
-            anchor=tk.W, padx=20)
+        tk.Label(win, text="  All students passed!",
+                 font=("Arial", 9), bg=WHITE, fg=GREEN, anchor=tk.W).pack(anchor=tk.W, padx=20)
 
     tk.Button(
         win, text="Close", command=win.destroy,
@@ -263,15 +234,7 @@ def _show_statistics_window(parent, stats, top_students, failed_students):
     ).pack(pady=12)
 
 
-# ══════════════════════════════════════════════════════════════════════════════
-# Main application class
-# ══════════════════════════════════════════════════════════════════════════════
-
 class ResultManagerApp:
-    """
-    Root Tkinter application for Student Result Manager & Analyzer.
-    Composes the main window with a side menu, Treeview table, and status bar.
-    """
 
     def __init__(self, root):
         self.root = root
@@ -283,12 +246,9 @@ class ResultManagerApp:
         self.manager = StudentManager()
 
         self._build_ui()
-        self._auto_load()   # silently load saved data on startup
-
-    # ── UI construction ───────────────────────────────────────────────────────
+        self._auto_load()
 
     def _build_ui(self):
-        """Build the full window layout."""
         self._build_header()
         self._build_body()
         self._build_status_bar()
@@ -325,7 +285,6 @@ class ResultManagerApp:
             fg=LIGHT_GREY, bg=MID_BLUE, pady=6
         ).pack()
 
-        # Button definitions: (label, handler, colour)
         menu_items = (
             ("Add Student",  self._cmd_add,        GREEN),
             ("View All",     self._cmd_view_all,   BLUE),
@@ -349,7 +308,6 @@ class ResultManagerApp:
             )
             btn.pack(pady=3, padx=8)
 
-        # ── Hint label ──
         tk.Label(
             sidebar,
             text="\nTip: Double-click a\nrow to view details.\nSelect a row then\nUpdate/Delete it.",
@@ -360,7 +318,6 @@ class ResultManagerApp:
         main = tk.Frame(parent, bg=WHITE, relief=tk.FLAT, bd=1)
         main.pack(side=tk.LEFT, fill=tk.BOTH, expand=True)
 
-        # ── Filter / search bar at the top ──
         filter_bar = tk.Frame(main, bg=LIGHT_GREY, pady=5)
         filter_bar.pack(fill=tk.X, padx=10, pady=(8, 0))
 
@@ -388,7 +345,6 @@ class ResultManagerApp:
             font=("Arial", 9), bg=LIGHT_GREY, fg=MID_BLUE
         ).pack(side=tk.RIGHT, padx=10)
 
-        # ── Treeview table ──
         self._build_treeview(main)
 
     def _build_treeview(self, parent):
@@ -413,14 +369,12 @@ class ResultManagerApp:
         hsb.config(command=self.tree.xview)
 
         col_config = {
-            "ID":         60,  "Name":      140, "Maths":  55,
-            "Eng":        55,  "Phy":       55,  "Chem":   55,
-            "CS":         55,  "Total":     55,  "Percentage": 80,
-            "Grade":      50,  "Status":    60,
+            "ID": 60, "Name": 140, "Maths": 55, "Eng": 55,
+            "Phy": 55, "Chem": 55, "CS": 55, "Total": 55,
+            "Percentage": 80, "Grade": 50, "Status": 60,
         }
         for col, width in col_config.items():
-            self.tree.heading(col, text=col,
-                              command=lambda c=col: self._sort_treeview(c))
+            self.tree.heading(col, text=col, command=lambda c=col: self._sort_treeview(c))
             self.tree.column(col, width=width, anchor=tk.CENTER, minwidth=40)
 
         self.tree.tag_configure("pass_row", foreground=GREEN)
@@ -431,16 +385,13 @@ class ResultManagerApp:
         hsb.pack(side=tk.BOTTOM, fill=tk.X)
         self.tree.pack(fill=tk.BOTH, expand=True)
 
-        # Double-click shows detail popup
         self.tree.bind("<Double-1>", self._on_double_click)
 
         self._sort_column = None
         self._sort_reverse = False
 
     def _build_status_bar(self):
-        self.status_var = tk.StringVar(
-            value="Ready.  Load existing data or add a new student to begin."
-        )
+        self.status_var = tk.StringVar(value="Ready. Load existing data or add a new student.")
         status = tk.Label(
             self.root, textvariable=self.status_var,
             relief=tk.SUNKEN, anchor=tk.W,
@@ -448,10 +399,7 @@ class ResultManagerApp:
         )
         status.pack(fill=tk.X, side=tk.BOTTOM)
 
-    # ── Treeview helpers ──────────────────────────────────────────────────────
-
     def _refresh_treeview(self, students=None):
-        """Repopulate the Treeview from the given list (or all students)."""
         if students is None:
             students = self.manager.get_all_students()
 
@@ -482,7 +430,6 @@ class ResultManagerApp:
         self.record_count_var.set(f"{len(students)} record(s)")
 
     def _get_selected_id(self):
-        """Return the student ID of the currently selected Treeview row, or None."""
         selected = self.tree.selection()
         if selected:
             return self.tree.item(selected[0], "values")[0]
@@ -492,7 +439,6 @@ class ResultManagerApp:
         self.status_var.set(message)
 
     def _on_double_click(self, event):
-        """Show detailed marks breakdown when a row is double-clicked."""
         s_id = self._get_selected_id()
         if s_id:
             student = self.manager.find_by_id(s_id)
@@ -500,7 +446,6 @@ class ResultManagerApp:
                 _show_student_detail(self.root, student)
 
     def _on_filter_change(self, *args):
-        """Live-filter the Treeview as the user types in the filter box."""
         query = self.filter_var.get().strip().lower()
         if not query:
             self._refresh_treeview()
@@ -517,7 +462,6 @@ class ResultManagerApp:
         self._refresh_treeview()
 
     def _sort_treeview(self, column):
-        """Sort the Treeview by the clicked column header."""
         students = self.manager.get_all_students()
 
         col_key_map = {
@@ -543,19 +487,13 @@ class ResultManagerApp:
             self._sort_column = column
             self._sort_reverse = False
 
-        sorted_students = sorted(students, key=col_key_map[column],
-                                 reverse=self._sort_reverse)
+        sorted_students = sorted(students, key=col_key_map[column], reverse=self._sort_reverse)
         self._refresh_treeview(sorted_students)
 
-    # ── Auto-load on startup ──────────────────────────────────────────────────
-
     def _auto_load(self):
-        """Load saved data silently when the application starts."""
         msg = self.manager.load_data()
         self._refresh_treeview()
         self._set_status(f"Startup: {msg}")
-
-    # ── Menu command handlers ─────────────────────────────────────────────────
 
     def _cmd_add(self):
         success = _open_student_form(self.root, "Add New Student", self.manager)
@@ -589,9 +527,8 @@ class ResultManagerApp:
         if results:
             self._set_status(f"Search '{query}': found {len(results)} record(s).")
         else:
-            self._set_status(f"Search '{query}': no matching records found.")
-            messagebox.showinfo("Search Result",
-                f"No student found matching '{query}'.", parent=self.root)
+            self._set_status(f"Search '{query}': no records found.")
+            messagebox.showinfo("Search Result", f"No student found matching '{query}'.", parent=self.root)
 
     def _cmd_update(self):
         s_id = self._get_selected_id()
@@ -607,12 +544,11 @@ class ResultManagerApp:
 
         student = self.manager.find_by_id(s_id)
         if student is None:
-            messagebox.showerror("Not Found",
-                f"Student ID '{s_id}' not found.", parent=self.root)
+            messagebox.showerror("Not Found", f"Student ID '{s_id}' not found.", parent=self.root)
             return
 
         success = _open_student_form(
-            self.root, f"Update Student – {s_id}", self.manager,
+            self.root, f"Update Student - {s_id}", self.manager,
             existing_student=student
         )
         if success:
@@ -633,8 +569,7 @@ class ResultManagerApp:
 
         student = self.manager.find_by_id(s_id)
         if student is None:
-            messagebox.showerror("Not Found",
-                f"Student ID '{s_id}' not found.", parent=self.root)
+            messagebox.showerror("Not Found", f"Student ID '{s_id}' not found.", parent=self.root)
             return
 
         confirm = messagebox.askyesno(
@@ -658,7 +593,7 @@ class ResultManagerApp:
             messagebox.showinfo("Statistics", msg, parent=self.root)
             return
 
-        top_students   = self.manager.get_top_students(3)
+        top_students    = self.manager.get_top_students(3)
         failed_students = self.manager.get_failed_students()
 
         _show_statistics_window(self.root, stats, top_students, failed_students)
