@@ -1,11 +1,3 @@
-"""
-main.py
--------
-Entry point for the Student Result Manager & Analyzer.
-Run this file to start the application:
-    python main.py
-"""
-
 import tkinter as tk
 from gui import ResultManagerApp
 
