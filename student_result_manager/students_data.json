@@ -1,0 +1,182 @@
+[
+    {
+        "student_id": "S001",
+        "name": "Alice Johnson",
+        "marks": {
+            "Mathematics": 85,
+            "English": 78,
+            "Physics": 90,
+            "Chemistry": 88,
+            "Computer Science": 92
+        },
+        "total": 433,
+        "percentage": 86.6,
+        "grade": "A",
+        "status": "Pass"
+    },
+    {
+        "student_id": "S002",
+        "name": "Bob Smith",
+        "marks": {
+            "Mathematics": 45,
+            "English": 60,
+            "Physics": 38,
+            "Chemistry": 42,
+            "Computer Science": 55
+        },
+        "total": 240,
+        "percentage": 48.0,
+        "grade": "F",
+        "status": "Fail"
+    },
+    {
+        "student_id": "S003",
+        "name": "Carol Davis",
+        "marks": {
+            "Mathematics": 72,
+            "English": 68,
+            "Physics": 75,
+            "Chemistry": 70,
+            "Computer Science": 80
+        },
+        "total": 365,
+        "percentage": 73.0,
+        "grade": "B",
+        "status": "Pass"
+    },
+    {
+        "student_id": "S004",
+        "name": "David Wilson",
+        "marks": {
+            "Mathematics": 95,
+            "English": 92,
+            "Physics": 88,
+            "Chemistry": 96,
+            "Computer Science": 98
+        },
+        "total": 469,
+        "percentage": 93.8,
+        "grade": "A+",
+        "status": "Pass"
+    },
+    {
+        "student_id": "S005",
+        "name": "Emma Brown",
+        "marks": {
+            "Mathematics": 55,
+            "English": 58,
+            "Physics": 62,
+            "Chemistry": 50,
+            "Computer Science": 65
+        },
+        "total": 290,
+        "percentage": 58.0,
+        "grade": "D",
+        "status": "Pass"
+    },
+    {
+        "student_id": "S006",
+        "name": "Frank Miller",
+        "marks": {
+            "Mathematics": 30,
+            "English": 25,
+            "Physics": 40,
+            "Chemistry": 35,
+            "Computer Science": 20
+        },
+        "total": 150,
+        "percentage": 30.0,
+        "grade": "F",
+        "status": "Fail"
+    },
+    {
+        "student_id": "S007",
+        "name": "Grace Lee",
+        "marks": {
+            "Mathematics": 80,
+            "English": 85,
+            "Physics": 78,
+            "Chemistry": 82,
+            "Computer Science": 88
+        },
+        "total": 413,
+        "percentage": 82.6,
+        "grade": "A",
+        "status": "Pass"
+    },
+    {
+        "student_id": "S008",
+        "name": "Henry Taylor",
+        "marks": {
+            "Mathematics": 62,
+            "English": 70,
+            "Physics": 58,
+            "Chemistry": 65,
+            "Computer Science": 72
+        },
+        "total": 327,
+        "percentage": 65.4,
+        "grade": "C",
+        "status": "Pass"
+    },
+    {
+        "student_id": "S009",
+        "name": "Isabella Martinez",
+        "marks": {
+            "Mathematics": 48,
+            "English": 52,
+            "Physics": 45,
+            "Chemistry": 50,
+            "Computer Science": 55
+        },
+        "total": 250,
+        "percentage": 50.0,
+        "grade": "D",
+        "status": "Pass"
+    },
+    {
+        "student_id": "S010",
+        "name": "James Anderson",
+        "marks": {
+            "Mathematics": 91,
+            "English": 88,
+            "Physics": 85,
+            "Chemistry": 90,
+            "Computer Science": 87
+        },
+        "total": 441,
+        "percentage": 88.2,
+        "grade": "A",
+        "status": "Pass"
+    },
+    {
+        "student_id": "S011",
+        "name": "Karen White",
+        "marks": {
+            "Mathematics": 25,
+            "English": 30,
+            "Physics": 20,
+            "Chemistry": 35,
+            "Computer Science": 28
+        },
+        "total": 138,
+        "percentage": 27.6,
+        "grade": "F",
+        "status": "Fail"
+    },
+    {
+        "student_id": "S012",
+        "name": "Liam Thomas",
+        "marks": {
+            "Mathematics": 78,
+            "English": 82,
+            "Physics": 76,
+            "Chemistry": 80,
+            "Computer Science": 84
+        },
+        "total": 400,
+        "percentage": 80.0,
+        "grade": "A",
+        "status": "Pass"
+    }
+]
